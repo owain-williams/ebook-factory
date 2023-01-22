@@ -66,7 +66,7 @@ def get_chapter_content(chapter: str, subject: str) -> str:
         model="text-davinci-003",
         prompt=f"Give me 8-10 paragraphs of content for a chapter on {chapter}, in a book about {subject}.",
         temperature=1.0,
-        max_tokens=5000,
+        max_tokens=4000,
         top_p=1.0,
         frequency_penalty=0.5,
         presence_penalty=0.0
@@ -90,6 +90,20 @@ def get_chapter_summary(chapter: str, subject: str) -> str:
         prompt=f"Give me a 3-5 sentence summary for a chapter on {chapter}, in a book about {subject}.",
         temperature=1.0,
         max_tokens=500,
+        top_p=1.0,
+        frequency_penalty=0.5,
+        presence_penalty=0.0
+    )
+    return response['choices'][0]['text']
+
+
+def summarise_chapter(content: str, chapter: str, subject: str) -> str:
+    print(f'Summarising {chapter}...')
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=f"Give me a 3-5 sentence summary of the following in a book about {subject}: {content}",
+        temperature=1.0,
+        max_tokens=4000,
         top_p=1.0,
         frequency_penalty=0.5,
         presence_penalty=0.0
@@ -128,11 +142,11 @@ chapter_dict = chapters_to_list(chapters)
 # write the chapters to a file
 with open(f'ebooks/{subject} ebook.txt', 'w') as file:
     for title in chapter_dict:
-        file.write(f'Chapter Title - {title}\n')
-        file.write('Chapter Introduction\n')
-        file.write(get_chapter_introduction(f'{title}'))
-        file.write('Chapter Content\n')
-        file.write(get_chapter_content(f'{title}'))
-        file.write('Chapter Summary\n')
-        file.write(get_chapter_summary(f'{title}'))
+        file.write(f'Chapter - {title}\n')
+        introduction = get_chapter_introduction(title, subject)
+        file.write(introduction)
+        content = get_chapter_content(title, subject)
+        file.write(content)
+        summary = summarise_chapter(content, title, subject)
+        file.write(summary)
         file.write('\n\n')
