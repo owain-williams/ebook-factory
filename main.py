@@ -14,6 +14,7 @@ if not runsingle:
             file.write('Chapters:\n')
             for chapter in chapter_dict:
                 file.write(f'{chapter}\n')
+            file.write('\n\n')
             for title in chapter_dict:
                 file.write(f'Chapter - {title}\n')
                 introduction = EbookFactory.get_chapter_introduction(
